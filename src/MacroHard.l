@@ -15,6 +15,8 @@
 
 #define MAX_IDENTIFIER_LENGTH 32
 
+int line = 1;
+int err = 0;
 %}
 
 %s NORMAL
@@ -87,7 +89,7 @@ Comment 	{"//"[^]*"\n")
 "^" 		{ printf("(Operator 	, %d(^)		)\n", BitXor); 		return BitXor; 	}
 
  /* Separator */
-{Separator} 	{ 						}
+{Separator} 	{ if(yytext[0] == '\n') line++; 	}	
 {Punctuation} 	{ printf("(Punctuation 	, %d(%c) 	)\n", yytext[0], yytext[0]); 	return yytext[0]; 	}
 
  /* Bracket */
@@ -120,5 +122,21 @@ Comment 	{"//"[^]*"\n")
 	return Identifier;
 }
 
+. 		{ err++; printf("Line %d : Error Type, NO Matching Pattern - %s\n", line, yytext); return -1; 	}
+
 %%
+
+int main(int argc, char *argv[]){
+	int ret;
+	if(argc == 2)
+		freopen(argv[1], "r", stdin);
+	else if(argc != 1 ){
+		printf("Check your arguments!\n");
+		exit(0);
+	}
+	while(ret = yylex())
+		;
+	printf("\n# of lexical errors: %d\n\n", err);
+	return 0;
+}
 

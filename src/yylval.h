@@ -1,4 +1,4 @@
-struct lval{
+union lval{
 	int integerConstant;
 	int boolConstant;
 	double doubleConstant;
@@ -6,4 +6,4 @@ struct lval{
 	char identifier[32];
 };
 
-struct lval yylval;
+union lval yylval;

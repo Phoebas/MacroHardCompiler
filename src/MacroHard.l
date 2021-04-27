@@ -22,7 +22,7 @@
 %option stack
 
 /* Definition */
-Identifier 	([A-Za-z][A-Za-z_0-9]*)
+Identifier 	([A-Za-z_][A-Za-z_0-9]*)
 Binary 		([+-]?0[Bb][01]+)
 Decimal 	([+-]?[0-9]+)
 Hex 		([+-]?0[Xx][0-9A-Fa-f]+)
@@ -34,7 +34,7 @@ String 		(\"[^"\n]*\")
 Operator 	("+"|"-"|"*"|"/"|"%"|"++"|"--"|"<"|"<="|">"|">="|"="|"=="|"!="|"&&"|"!"|"||"|"&"|"|"|"^")
 Bracket 	("["|"]"|"("|")"|"{"|"}")
 Separator 	([ \t\n]+)
-Comma 		(";")
+Punctuation 	(","|"."|";")
 Comment 	{"//"[^]*"\n")
 
 %%
@@ -57,6 +57,7 @@ Comment 	{"//"[^]*"\n")
 "else" 		{ printf("(else 		, Keyword 	)\n"); return Else;  	}
 "return" 	{ printf("(return 		, Keyword 	)\n"); return Return; 	}
 "break" 	{ printf("(break 		, Keyword 	)\n"); return Break; 	}
+"continue" 	{ printf("(continue 		, Keyword 	)\n"); return Continue; }
 "new" 		{ printf("(new 			, Keyword 	)\n"); return New; 	}
 "array" 	{ printf("(array 		, Keyword	)\n"); return Array; 	}
 "print" 	{ printf("(print 		, Keyword 	)\n"); return Print; 	}
@@ -86,10 +87,10 @@ Comment 	{"//"[^]*"\n")
 
  /* Separator */
 {Separator} 	{ 						}
-{Comma} 	{ return Comma; 				}
+{Punctuation} 	{ printf("( %c 		, Punctuation 	)\n", yytext[0]); 	return yytext[0]; 	}
 
  /* Bracket */
-{Bracket} 	{ printf("(%c 		, Bracket 	)\n", yytext[0]); 	 return yytext[0]; 	}
+{Bracket} 	{ printf("( %c 		, Bracket 	)\n", yytext[0]); 	 return yytext[0]; 	}
 
  /* Constants */
 {Binary} 	{ yylval.integerConstant = strtol(yytext, NULL, 2); 	printf("(%d 		, IntegerConst 	)\n", yylval.integerConstant); 	return IntegerConst; 	}

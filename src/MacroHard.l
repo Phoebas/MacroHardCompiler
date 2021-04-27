@@ -84,6 +84,7 @@ Comment 	{"//"[^]*"\n")
 "!" 		{ printf("(not 			, Operator 	)\n"); return Not; 	}
 "&" 		{ printf("(bitand 		, Operator 	)\n"); return BitAnd; 	}
 "|" 		{ printf("(bitor 		, Operator 	)\n"); return BitOr; 	}
+"^" 		{ printf("(bitxor 		, Operator 	)\n"); return BitXor; 	}
 
  /* Separator */
 {Separator} 	{ 						}

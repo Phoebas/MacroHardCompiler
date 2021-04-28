@@ -1,0 +1,7 @@
+!build/Makefile
+!benchmark/*.mh
+!include/*.h
+!src/*.c
+!src/*.cpp
+!src/*.l
+!src/*.y

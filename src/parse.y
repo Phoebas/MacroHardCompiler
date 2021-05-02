@@ -14,41 +14,198 @@
 #include "type.h"
 #include "yylval.h"
 
+extern union lval yylval;
+
 %}
 
-%token Void Bol Int Double String New Array
-%token Class Interface Extends Implements This Null
-%token Add Minus Multiply Divise Mod SelfInc SelfDec
-%token Equal GreatEqual Equal Unequal Less LessEqual Assign
-%token And Or Not BitAnd BitOr BitXor
-%token For While If Else Return Break Continue
-%token Identifier BoolConst IntegerConst DoubleConst StringConst
-%token Print ReadInt ReadLine
+/* terminal without value */
+%token VOID BOL INT DOUBLE STRING NEW ARRAY
+%token CLASS INTERFACE EXTENDS IMPLEMENTS THIS _NULL
+%token ADD MINUS MULTIPLY DIVISE MOD SELFINC SELFDEC
+%token EQUAL GREATEQUAL EQUAL UNEQUAL LESS LESSEQUAL ASSIGN
+%token AND OR NOT BITAND BITOR BITXOR
+%token FOR WHILE IF ELSE RETUAN BREAK CONTINUE
+%token PRINT READINT READLINE
 
-/* terminal */
-%token <identifier> 	Identifier
-%token <stringConst> 	StringConst
-%token <integerConst> 	IntegerConst
-%token <doubleConst> 	DoubleConst
-%token <boolConst> 	BoolConst
+/* terminal with value */
+%token <identifier> 		IDENTIFIER
+%token <stringConstant> 	STRINGCONST
+%token <integerConstant> 	INTEGERCONST
+%token <doubleConstant> 	DOUBLECONST
+%token <boolConstant> 		BOOLCONST
 
 /* non-terminal */
-%token <expression> 	Const Expr Call
-%token <lvalue> 	LValue
-%token <type> 		Type
+%token <expression> 		const expr call
+%token <lvalue> 		lvalue
+%token <type> 			type
+%token <declaration>  		classDecl decl fild intfDecl
+%token <functionDeclaration> 	funcDecl frncHeader
+%token <declarationList> 	filedList declList intfList
+%token <variableDeclaration> 	var varDecl
 
 %%
 
-Program 	: Declaration+
+program 	: declarations
+		;
 
-Declaration 	: Var
-		| Func
-		| Class
-		| Interface
+declarations 	: vars
+		| funcs
+		| classes
+		| interfaces
+		;
 
-Type 		| Int
-		| Double
-		| String
+type 		: INT
+		| DOUBLE
+		| STRING
+		;
 
-Var 		: Type Identifier
-Identifier 	: 
+vars		: type IDENTIFIER moreids ';'
+      		| type IDENTIFIER '[' INTEGERCONST ']' moreids ';'
+		;
+
+moreids 	: 
+	  	| ',' IDENTIFIER moreids
+		| ',' IDENTIFIER '[' INTEGERCONST ']' moreids
+		;
+
+formals 	: type IDENTIFIER morevars
+	 	;
+
+morevars 	:
+	 	| ',' type IDENTIFIER morevars
+		;
+
+func 		: type IDENTIFIER '(' formals ')' block
+		| void IDENTIFIER '(' formals ')' block
+		;
+
+funcs 		:
+		| func funcs
+		;
+
+field 		: type IDENTIFIER ';'
+		| func
+		;
+
+class 		: CLASS IDENTIFIER '{' field morefields '}'
+		;
+
+morefields 	: 
+	    	| field morefields
+		;
+
+classes 	:
+		|  class classes
+	 	;
+
+lvalue 		: 
+	 	| IDENTIFIER
+		| expr.IDENTIFIER
+		| expr '[' expr ']'
+		;
+
+assign 		: lvalue '=' expr ';'
+	 	;
+
+constant 	: INTEGERCONST
+	  	| BOOLCONST
+		| DOUBLECONST
+		| STRINGCONST
+		| _NULL
+		;
+
+expr 		: assign
+       		| constant
+		| lvalue
+		| lvalue SELFINC
+		| SELFINC lvalue
+		| lvalue SELFDEC
+		| SELFDEC lvalue
+		| THIS
+		| call
+		| '(' expr ')'
+		| expr '+' expr
+		| expr '-' expr
+		| expr '*' expr
+		| expr '/' expr
+		| expr '%' expr
+		| '-' expr
+		| expr '<' expr
+		| expr LESSEQUAL expr
+		| expr '>' expr
+		| expr GREATEQUAL expr
+		| expr EQUAL expr
+		| expr UNEQUAL expr
+		| expr AND expr
+		| expr OR expr
+		| NOT expr
+		| expr BITAND expr
+		| expr BITOR expr
+		| expr BITXOR expr
+		| input
+		| NEW IDENTIFIER
+		;
+
+stmt 		: ';'
+       		| expr ';'
+		| if
+		| while
+		| for
+		| break
+		| return
+		| output
+		| block
+		;
+
+block 		: '{' stmt morestmts '}'
+		;
+
+morestmts 	: 
+	   	| stmt morestmts 
+		;
+
+if 		: IF '(' expr ')' stmt
+     		| IF '(' expr ')' stmt ELSE stmt
+		;
+
+while 		: WHILE '(' expr ')' stmt
+		;
+
+for 		: FOR '(' ';' ';' ')' stmt
+      		| FOR '(' expr ';' ';' ')' stmt
+		| FOR '(' ';' expr ';' ')' stmt
+		| FOR '(' ';' ';' expr ')' stmt
+		| FOR '(' ';' expr ';' expr ')' stmt
+		| FOR '(' expr ';' ';' expr ')' stmt
+		| FOR '(' expr ';' expr ';' ')' stmt
+		| FOR '(' expr ';' expr ';' expr ')' stmt
+
+break 		: BREAK ';'
+		;
+
+continue 	: CONTINUE ';'
+	  	;
+
+input 		: READINTEGER '(' ')' ';'
+		| READLINE '(' ')' ';'
+		;
+
+output 		: PRINT '(' expr moreexprs ')' ';'
+	 	;
+
+moreexprs 	:
+	   	| ',' expr moreexprs
+		;
+
+parameters 	: 
+	    	| expr moreexprs
+		;
+
+moreexprs 	: 
+	   	| ',' expr moreexprs
+		;
+
+call 		: IDENTIFIER '(' parameters ')'
+       		| expr.IDENTIFIER '(' parameters ')'
+		;
+

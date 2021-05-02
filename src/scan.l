@@ -15,6 +15,8 @@
 
 #define MAX_IDENTIFIER_LENGTH 32
 
+union lval yylval;
+
 int line = 1;
 int err = 0;
 
@@ -43,51 +45,51 @@ Comment 	(#[^#]*#)
 %%
 
  /* Keyword */
-"void" 		{ printf("(Keyword 	, %d(void) 	)\n", Void); 		 return Void; 	}
-"int" 		{ printf("(Keyword  	, %d(int) 	)\n", Int); 		 return Int; 	}
-"double" 	{ printf("(Keyword 	, %d(double) 	)\n", Double); 		 return Double; }
-"bool" 		{ printf("(Keyword 	, %d(bool) 	)\n", Bool); 		 return Bool; 	}
-"string" 	{ printf("(Keyword 	, %d(string) 	)\n", String); 		 return String; }
-"class" 	{ printf("(Keyword 	, %d(class)	)\n", Class); 		 return Class; 	}
-"interface" 	{ printf("(Keyword 	, %d(interface)	)\n", Interface); 	 return Interface;}
-"null" 		{ printf("(Keyword 	, %d(null)	)\n", Null); 		 return Null; 	}
-"this" 		{ printf("(Keyword  	, %d(this)	)\n", This); 		 return This; 	}
-"extends" 	{ printf("(Keyword 	, %d(extends)	)\n", Extends); 	 return Extends; }
-"implements" 	{ printf("(Keyword 	, %d(implements))\n", Implements); 	 return Implements;}
-"for" 		{ printf("(Keyword 	, %d(for)	)\n", For); 		 return For; 	}
-"while" 	{ printf("(Keyword 	, %d(while)	)\n", While); 		 return While; 	}
-"if" 		{ printf("(Keyword 	, %d(if)	)\n", If); 		 return If; 	}
-"else" 		{ printf("(Keyword 	, %d(else)	)\n", Else); 		 return Else;  	}
-"return" 	{ printf("(Keyword 	, %d(return)	)\n", Return); 		 return Return; }
-"break" 	{ printf("(Keyword 	, %d(break)	)\n", Break); 		 return Break; 	}
-"continue" 	{ printf("(Keyword 	, %d(continue)	)\n", Continue); 	 return Continue;}
-"new" 		{ printf("(Keyword 	, %d(new)	)\n", New); 		 return New; 	}
-"array" 	{ printf("(Keyword	, %d(array)	)\n", Array); 		 return Array; 	}
-"print" 	{ printf("(Keyword 	, %d(print)	)\n", Print); 		 return Print; 	}
-"readint" 	{ printf("(Keyword 	, %d(readint)	)\n", ReadInt); 	 return ReadInt;}
-"readline" 	{ printf("(Keyword 	, %d(readline)	)\n", ReadLine ); 	 return ReadLine;}
+"Void" 		{ printf("(Keyword 	, %d(VOID) 	)\n", VOID); 		 return VOID; 	}
+"int" 		{ printf("(Keyword  	, %d(int) 	)\n", INT); 		 return INT; 	}
+"double" 	{ printf("(Keyword 	, %d(double) 	)\n", DOUBLE); 		 return DOUBLE; }
+"bool" 		{ printf("(Keyword 	, %d(bool) 	)\n", BOOL); 		 return BOOL; 	}
+"string" 	{ printf("(Keyword 	, %d(string) 	)\n", STRING); 		 return STRING; }
+"class" 	{ printf("(Keyword 	, %d(class)	)\n", CLASS); 		 return CLASS; 	}
+"interface" 	{ printf("(Keyword 	, %d(interface)	)\n", INTERFACE); 	 return INTERFACE;}
+"null" 		{ printf("(Keyword 	, %d(null)	)\n", _NULL); 		 return _NULL; 	}
+"this" 		{ printf("(Keyword  	, %d(this)	)\n", THIS); 		 return THIS; 	}
+"extends" 	{ printf("(Keyword 	, %d(extends)	)\n", EXTENDS); 	 return EXTENDS; }
+"implements" 	{ printf("(Keyword 	, %d(implements))\n", IMPLEMENTS); 	 return IMPLEMENTS;}
+"for" 		{ printf("(Keyword 	, %d(for)	)\n", FOR); 		 return FOR; 	}
+"while" 	{ printf("(Keyword 	, %d(while)	)\n", WHILE); 		 return WHILE; 	}
+"if" 		{ printf("(Keyword 	, %d(if)	)\n", IF); 		 return IF; 	}
+"else" 		{ printf("(Keyword 	, %d(else)	)\n", ELSE); 		 return ELSE;  	}
+"return" 	{ printf("(Keyword 	, %d(return)	)\n", RETURN); 		 return RETURN; }
+"break" 	{ printf("(Keyword 	, %d(break)	)\n", BREAK); 		 return BREAK; 	}
+"continue" 	{ printf("(Keyword 	, %d(continue)	)\n", CONTINUE); 	 return CONTINUE;}
+"new" 		{ printf("(Keyword 	, %d(new)	)\n", NEW); 		 return NEW; 	}
+"array" 	{ printf("(Keyword	, %d(array)	)\n", ARRAY); 		 return ARRAY; 	}
+"print" 	{ printf("(Keyword 	, %d(print)	)\n", PRINT); 		 return PRINT; 	}
+"readint" 	{ printf("(Keyword 	, %d(readint)	)\n", READINT); 	 return READINT;}
+"readline" 	{ printf("(Keyword 	, %d(readline)	)\n", READLINE ); 	 return READLINE;}
 
  /* Operators */
-"+" 		{ printf("(Operator	, %d(+)		)\n", Add); 		return Add; 	}
-"-" 		{ printf("(Operator 	, %d(-)		)\n", Minus); 		return Minus; 	}
-"*" 		{ printf("(Operator 	, %d(*)		)\n", Multiply); 	return Multiply;}
-"/" 		{ printf("(Operator 	, %d(/)		)\n", Divise); 		return Divise; 	}
-"%" 		{ printf("(Operator  	, %d(%)		)\n", Mod); 		return Mod; 	}
-"++" 		{ printf("(Operator	, %d(++)	)\n", SelfInc); 	return SelfInc; }
-"--" 		{ printf("(Operator 	, %d(--)	)\n", SelfDec); 	return SelfDec; }
-"<" 		{ printf("(Operator 	, %d(<)		)\n", Less); 		return Less; 	}
-"<=" 		{ printf("(Operator 	, %d(<=)	)\n", LessEqual); 	return LessEqual;}
-">" 		{ printf("(Operator 	, %d(>)		)\n", Greater); 	return Greater; }
-">=" 		{ printf("(Operator 	, %d(>=)	)\n", GreaterEqual); 	return GreaterEqual;}
-"=" 		{ printf("(Operator 	, %d(=)		)\n", Assign); 		return Assign; 	}
-"==" 		{ printf("(Operator 	, %d(==)	)\n", Equal); 		return Equal; 	}
-"!=" 		{ printf("(Operator 	, %d(!=)	)\n", Unequal); 	return Unequal; }
-"&&" 		{ printf("(Operator  	, %d(&&)	)\n", And); 		return And; 	}
-"||" 		{ printf("(Operator 	, %d(||)	)\n", Or); 		return Or; 	}
-"!" 		{ printf("(Operator 	, %d(!)		)\n", Not); 		return Not; 	}
-"&" 		{ printf("(Operator 	, %d(&)		)\n", BitAnd); 		return BitAnd; 	}
-"|" 		{ printf("(Operator 	, %d(|)		)\n", BitOr); 		return BitOr; 	}
-"^" 		{ printf("(Operator 	, %d(^)		)\n", BitXor); 		return BitXor; 	}
+"+" 		{ printf("(Operator	, %d(+)		)\n", ADD); 		return ADD; 	}
+"-" 		{ printf("(Operator 	, %d(-)		)\n", MINUS); 		return MINUS; 	}
+"*" 		{ printf("(Operator 	, %d(*)		)\n", MULTIPLY); 	return MULTIPLY;}
+"/" 		{ printf("(Operator 	, %d(/)		)\n", DIVISE); 		return DIVISE; 	}
+"%" 		{ printf("(Operator  	, %d(%)		)\n", MOD); 		return MOD; 	}
+"++" 		{ printf("(Operator	, %d(++)	)\n", SELFINC); 	return SELFINC; }
+"--" 		{ printf("(Operator 	, %d(--)	)\n", SELFDEC); 	return SELFDEC; }
+"<" 		{ printf("(Operator 	, %d(<)		)\n", LESS); 		return LESS; 	}
+"<=" 		{ printf("(Operator 	, %d(<=)	)\n", LESSEQUAL); 	return LESSEQUAL;}
+">" 		{ printf("(Operator 	, %d(>)		)\n", GREATER); 	return GREATER; }
+">=" 		{ printf("(Operator 	, %d(>=)	)\n", GREATEREQUAL); 	return GREATEREQUAL;}
+"=" 		{ printf("(Operator 	, %d(=)		)\n", ASSIGN); 		return ASSIGN; 	}
+"==" 		{ printf("(Operator 	, %d(==)	)\n", EQUAL); 		return EQUAL; 	}
+"!=" 		{ printf("(Operator 	, %d(!=)	)\n", UNEQUAL); 	return UNEQUAL; }
+"&&" 		{ printf("(Operator  	, %d(&&)	)\n", AND); 		return AND; 	}
+"||" 		{ printf("(Operator 	, %d(||)	)\n", OR); 		return OR; 	}
+"!" 		{ printf("(Operator 	, %d(!)		)\n", NOT); 		return NOT; 	}
+"&" 		{ printf("(Operator 	, %d(&)		)\n", BITAND); 		return BITAND; 	}
+"|" 		{ printf("(Operator 	, %d(|)		)\n", BITOR); 		return BITOR; 	}
+"^" 		{ printf("(Operator 	, %d(^)		)\n", BITXOR); 		return BITXOR; 	}
 
  /* Comment */
 {Comment} 	{ 					}
@@ -99,18 +101,18 @@ Comment 	(#[^#]*#)
 {Bracket} 	{ printf("(Bracket 	, %d(%c) 	)\n", yytext[0], yytext[0]); 	return yytext[0]; 	}
 
  /* Constants */
-{Binary} 	{ yylval.integerConstant = strtol(yytext, NULL, 2); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return IntegerConst; 	}
-{Decimal} 	{ yylval.integerConstant = strtol(yytext, NULL, 10); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return IntegerConst; 	}
-{Hex} 		{ yylval.integerConstant = strtol(yytext, NULL, 16); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return IntegerConst; 	}
-{Double} 	{ yylval.doubleConstant = atof(yytext); 		printf("(DoubleConst 	, %d 		)\n", yylval.doubleConstant); 	return DoubleConst; 	}
-{String} 	{ strcpy(yylval.stringConstant, yytext); 		printf("(StringConst 	, \"%s\" 	)\n", yylval.stringConstant);  	return StringConst; 	}
+{Binary} 	{ yylval.integerConstant = strtol(yytext, NULL, 2); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return INTEGERCONST; 	}
+{Decimal} 	{ yylval.integerConstant = strtol(yytext, NULL, 10); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return INTEGERCONST; 	}
+{Hex} 		{ yylval.integerConstant = strtol(yytext, NULL, 16); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return INTEGERCONST; 	}
+{Double} 	{ yylval.doubleConstant = atof(yytext); 		printf("(DoubleConst 	, %d 		)\n", yylval.doubleConstant); 	return DOUBLECONST; 	}
+{String} 	{ strcpy(yylval.stringConstant, yytext); 		printf("(StringConst 	, \"%s\" 	)\n", yylval.stringConstant);  	return STRINGCONST; 	}
 {Bool} 		{ 
 		yylval.boolConstant = (yytext[0] == 't');
 		if(yylval.boolConstant)
 			printf("(BoolConst 	, true 		)\n");
 		else
 			printf("(BoolConst 	, false 	)\n");
-		return BoolConst;
+		return BOOLCONST;
 }
 
  /* Identifier */
@@ -122,7 +124,7 @@ Comment 	(#[^#]*#)
 	strcpy(yylval.identifier, yytext);
 	yylval.identifier[MAX_IDENTIFIER_LENGTH] = '\0';
 	printf("(Identifier 	, %s 	)\n", yylval.identifier);
-	return Identifier;
+	return IDENTIFIER;
 }
 
 . 		{ err++; printf("Line %d : Error Type, NO Matching Pattern - %s\n", line, yytext); return -1; 	}

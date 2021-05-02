@@ -5,5 +5,3 @@ union lval{
 	char stringConstant[1024];
 	char identifier[32];
 };
-
-union lval yylval;

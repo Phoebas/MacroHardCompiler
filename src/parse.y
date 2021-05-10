@@ -11,20 +11,41 @@
 
 %{
 
-#include "type.h"
 #include "yylval.h"
+#include "lex.yy.c"
 
-extern union lval yylval;
+extern YYSTYPE yylval;
+
+extern int yylex(void);
+
+int yyerror(char *s);
 
 %}
 
+%union {
+	int integerConstant;
+	char stringConstant[1024];
+	char identifier[32];
+	double doubleConstant;
+	bool boolConstant;
+	Statement statement;
+	Expression expression;
+	Lvalue lvalue;
+	Type type;
+	Decl decl;
+	Decls decls;
+	MoreDecl moredecl;
+	Params params;
+	Variable variable;
+}
+
 /* terminal without value */
-%token VOID BOL INT DOUBLE STRING NEW ARRAY
+%token VOID BOOL INT DOUBLE STRING NEW ARRAY
 %token CLASS INTERFACE EXTENDS IMPLEMENTS THIS _NULL
 %token ADD MINUS MULTIPLY DIVISE MOD SELFINC SELFDEC
-%token EQUAL GREATEQUAL EQUAL UNEQUAL LESS LESSEQUAL ASSIGN
+%token GREATEQUAL EQUAL UNEQUAL LESS LESSEQUAL ASSIGN
 %token AND OR NOT BITAND BITOR BITXOR
-%token FOR WHILE IF ELSE RETUAN BREAK CONTINUE
+%token FOR WHILE IF ELSE RETURN BREAK CONTINUE
 %token PRINT READINT READLINE
 
 /* terminal with value */
@@ -35,23 +56,25 @@ extern union lval yylval;
 %token <boolConstant> 		BOOLCONST
 
 /* non-terminal */
-%token <expression> 		const expr call
-%token <lvalue> 		lvalue
-%token <type> 			type
-%token <declaration>  		classDecl decl fild intfDecl
-%token <functionDeclaration> 	funcDecl frncHeader
-%token <declarationList> 	filedList declList intfList
-%token <variableDeclaration> 	var varDecl
+%type <statement> 		program stmt block if while for break continue input output
+%type <expression> 		constant expr call assign
+%type <lvalue> 			lvalue
+%type <type> 			type
+%type <decl>  			class field
+%type <decls> 			vars funcs classes
+%type <moredecl> 		declarations moreid morevars morefields morestmts moreexprs
+%type <params> 			formals parameters
+%type <variable> 		var 
 
 %%
 
 program 	: declarations
 		;
 
-declarations 	: vars
-		| funcs
-		| classes
-		| interfaces
+declarations 	: 
+	      	| vars declarations
+		| funcs declarations
+		| classes declarations
 		;
 
 type 		: INT
@@ -76,7 +99,7 @@ morevars 	:
 		;
 
 func 		: type IDENTIFIER '(' formals ')' block
-		| void IDENTIFIER '(' formals ')' block
+		| VOID IDENTIFIER '(' formals ')' block
 		;
 
 funcs 		:
@@ -100,7 +123,7 @@ classes 	:
 
 lvalue 		: 
 	 	| IDENTIFIER
-		| expr.IDENTIFIER
+		| expr '.' IDENTIFIER
 		| expr '[' expr ']'
 		;
 
@@ -152,6 +175,7 @@ stmt 		: ';'
 		| while
 		| for
 		| break
+		| continue
 		| return
 		| output
 		| block
@@ -183,10 +207,13 @@ for 		: FOR '(' ';' ';' ')' stmt
 break 		: BREAK ';'
 		;
 
+return 		: RETURN expr ';'
+	 	;
+
 continue 	: CONTINUE ';'
 	  	;
 
-input 		: READINTEGER '(' ')' ';'
+input 		: READINT '(' ')' ';'
 		| READLINE '(' ')' ';'
 		;
 
@@ -206,6 +233,12 @@ moreexprs 	:
 		;
 
 call 		: IDENTIFIER '(' parameters ')'
-       		| expr.IDENTIFIER '(' parameters ')'
+       		| expr '.' IDENTIFIER '(' parameters ')'
 		;
 
+%%
+
+int yyerror(char *s){
+	fprintf(stderr, "error: %s", s);
+	return 0;
+}

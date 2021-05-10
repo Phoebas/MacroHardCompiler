@@ -13,9 +13,7 @@
 #include "type.h"
 #include "yylval.h"
 
-#define MAX_IDENTIFIER_LENGTH 32
-
-union lval yylval;
+YYSTYPE yylval;
 
 int line = 1;
 int err = 0;
@@ -74,7 +72,7 @@ Comment 	(#[^#]*#)
 "-" 		{ printf("(Operator 	, %d(-)		)\n", MINUS); 		return MINUS; 	}
 "*" 		{ printf("(Operator 	, %d(*)		)\n", MULTIPLY); 	return MULTIPLY;}
 "/" 		{ printf("(Operator 	, %d(/)		)\n", DIVISE); 		return DIVISE; 	}
-"%" 		{ printf("(Operator  	, %d(%)		)\n", MOD); 		return MOD; 	}
+"%" 		{ printf("(Operator  	, %d(%%)	)\n", MOD); 		return MOD; 	}
 "++" 		{ printf("(Operator	, %d(++)	)\n", SELFINC); 	return SELFINC; }
 "--" 		{ printf("(Operator 	, %d(--)	)\n", SELFDEC); 	return SELFDEC; }
 "<" 		{ printf("(Operator 	, %d(<)		)\n", LESS); 		return LESS; 	}
@@ -104,7 +102,7 @@ Comment 	(#[^#]*#)
 {Binary} 	{ yylval.integerConstant = strtol(yytext, NULL, 2); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return INTEGERCONST; 	}
 {Decimal} 	{ yylval.integerConstant = strtol(yytext, NULL, 10); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return INTEGERCONST; 	}
 {Hex} 		{ yylval.integerConstant = strtol(yytext, NULL, 16); 	printf("(IntegerConst 	, %d 		)\n", yylval.integerConstant); 	return INTEGERCONST; 	}
-{Double} 	{ yylval.doubleConstant = atof(yytext); 		printf("(DoubleConst 	, %d 		)\n", yylval.doubleConstant); 	return DOUBLECONST; 	}
+{Double} 	{ yylval.doubleConstant = atof(yytext); 		printf("(DoubleConst 	, %lf 		)\n", yylval.doubleConstant); 	return DOUBLECONST; 	}
 {String} 	{ strcpy(yylval.stringConstant, yytext); 		printf("(StringConst 	, \"%s\" 	)\n", yylval.stringConstant);  	return STRINGCONST; 	}
 {Bool} 		{ 
 		yylval.boolConstant = (yytext[0] == 't');
@@ -139,9 +137,8 @@ int main(int argc, char *argv[]){
 		printf("Check your arguments!\n");
 		exit(0);
 	}
-	while(ret = yylex())
+	while((ret = yylex()))
 		;
 	printf("\n# of lexical errors: %d\n\n", err);
 	return 0;
 }
-

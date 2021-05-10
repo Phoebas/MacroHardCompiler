@@ -1,3 +1,10 @@
+#ifndef _TYPE_H
+
+#define _TYPE_H
+
+#ifndef YYTOKENTYPE
+#define YYTOKENTYPE
+
 enum yytokentype {
 	VOID =  	258, 		// ATTENTION: Any Type CANNOT Be Defined to ZERO.
 	INT =  		259,
@@ -56,3 +63,7 @@ enum yytokentype {
 	IDENTIFIER = 	293,
 	
 };
+
+#endif
+
+#endif

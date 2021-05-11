@@ -71,7 +71,7 @@ Comment 	(#[^#]*#)
 "+" 		{ printf("(Operator	, %d(+)		)\n", ADD); 		return ADD; 	}
 "-" 		{ printf("(Operator 	, %d(-)		)\n", MINUS); 		return MINUS; 	}
 "*" 		{ printf("(Operator 	, %d(*)		)\n", MULTIPLY); 	return MULTIPLY;}
-"/" 		{ printf("(Operator 	, %d(/)		)\n", DIVISE); 		return DIVISE; 	}
+"/" 		{ printf("(Operator 	, %d(/)		)\n", DIVIDE); 		return DIVIDE; 	}
 "%" 		{ printf("(Operator  	, %d(%%)	)\n", MOD); 		return MOD; 	}
 "++" 		{ printf("(Operator	, %d(++)	)\n", SELFINC); 	return SELFINC; }
 "--" 		{ printf("(Operator 	, %d(--)	)\n", SELFDEC); 	return SELFDEC; }

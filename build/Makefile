@@ -12,11 +12,11 @@ LIBS = -lc -lm -lfl
 LEX = flex
 YACC = bison
 LEXFLAGS = -d
-YACCFLAGS = -dvty
+YACCFLAGS = -dvty -Wno-other -Wcounterexamples
 
 OBJS = lex.yy.o y.tab.o
 
-test: link 
+test: #link 
 	@for file in ../benchmark/*.mh; do \
 		./scan $$file > ../benchmark/"$${file%.*}_scanned"; done
 
@@ -29,11 +29,14 @@ lex.yy.c: $(SDIR)/scan.l
 y.tab.c: lex.yy.c 
 	$(YACC) $(YACCFLAGS) $(SDIR)/parse.y
 
-y.tab.o : y.tab.c
-	$(CC) $(CFLAGS) -c -o y.tab.o y.tab.c
+# y.tab.o : y.tab.c
+#	$(CC) $(CFLAGS) -c -o y.tab.o y.tab.c
 
-link: $(OBJS)
-	$(LD) -o parse $(OBJS) $(LIBS)
+parser: y.tab.c
+	$(CC) $(CFLAGS) $(LIBS) -c -o parse y.tab.c
+
+# link: $(OBJS)
+#	$(LD) -o parse $(OBJS) $(LIBS)
 clean:
 	@find . ! -name 'Makefile' -type f -exec rm -f {} +
 	@find ../benchmark ! -name *.mh -type f -exec rm -f {} +

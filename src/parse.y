@@ -34,15 +34,13 @@ int yyerror(char *s);
 	Type type;
 	Decl decl;
 	Decls decls;
-	MoreDecl moredecl;
-	Params params;
 	Variable variable;
 }
 
 /* terminal without value */
 %token VOID BOOL INT DOUBLE STRING NEW ARRAY
 %token CLASS INTERFACE EXTENDS IMPLEMENTS THIS _NULL
-%token ADD MINUS MULTIPLY DIVISE MOD SELFINC SELFDEC
+%token ADD MINUS MULTIPLY DIVIDE MOD SELFINC SELFDEC
 %token GREATEQUAL EQUAL UNEQUAL LESS LESSEQUAL ASSIGN
 %token AND OR NOT BITAND BITOR BITXOR
 %token FOR WHILE IF ELSE RETURN BREAK CONTINUE
@@ -56,78 +54,95 @@ int yyerror(char *s);
 %token <boolConstant> 		BOOLCONST
 
 /* non-terminal */
-%type <statement> 		program stmt block if while for break continue input output
+%type <statements> 		stmt block
+%type <statement> 		if while for break continue input output
 %type <expression> 		constant expr call assign
 %type <lvalue> 			lvalue
 %type <type> 			type
-%type <decl>  			class field
-%type <decls> 			vars funcs classes
-%type <moredecl> 		declarations moreid morevars morefields morestmts moreexprs
-%type <params> 			formals parameters
+%type <decl>  			declaration classdecl funcdecl vardecl field
+%type <decls> 			declarations vars formals fields exprs parameters 
 %type <variable> 		var 
+
+/* precedence and associativity */
+%left 		','
+%right 		ASSIGN
+%left 		OR
+%left 		AND
+%left 		BITOR
+%left 		BITXOR
+%left 		BITAND
+%left 		UNEQUAL
+%left 		EQUAL
+%left  		GREATER GREATEREQUAL LESS LESSEQUAL
+%left 		ADD MINUS
+%left 		MULTIPLY DIVIDE MOD
+%right 		NEGATIVE NOT SELFINC SELFDEC
+%left 		'.' '['
+
+%nonassoc 	DOT
+
+%nonassoc 	LOWER_THAN_ELSE
+%nonassoc 	ELSE
 
 %%
 
 program 	: declarations
 		;
 
-declarations 	: 
-	      	| vars declarations
-		| funcs declarations
-		| classes declarations
+declarations 	: declaration
+	      	| declarations declaration
+		;
+
+declaration 	: funcdecl
+		| vardecl
+		| classdecl
 		;
 
 type 		: INT
 		| DOUBLE
 		| STRING
+		| BOOL
 		;
 
-vars		: type IDENTIFIER moreids ';'
-      		| type IDENTIFIER '[' INTEGERCONST ']' moreids ';'
-		;
-
-moreids 	: 
-	  	| ',' IDENTIFIER moreids
-		| ',' IDENTIFIER '[' INTEGERCONST ']' moreids
-		;
-
-formals 	: type IDENTIFIER morevars
+vardecl 	: type vars ';'
 	 	;
 
-morevars 	:
-	 	| ',' type IDENTIFIER morevars
+vars 		: var
+       		| vars ',' var
 		;
 
-func 		: type IDENTIFIER '(' formals ')' block
+var 		: IDENTIFIER
+      		| IDENTIFIER '[' INTEGERCONST ']'
+		;
+
+formal 		: type IDENTIFIER
+	 	;
+
+formals 	: formal
+	 	| formals ',' formal
+		;
+
+funcdecl 	: type IDENTIFIER '(' formals ')' block
 		| VOID IDENTIFIER '(' formals ')' block
 		;
 
-funcs 		:
-		| func funcs
+field 		: vardecl
+		| funcdecl
 		;
 
-field 		: type IDENTIFIER ';'
-		| func
+fields 		: field
+	 	| fields field
 		;
 
-class 		: CLASS IDENTIFIER '{' field morefields '}'
+classdecl 	: CLASS IDENTIFIER '{' fields '}'
 		;
 
-morefields 	: 
-	    	| field morefields
+lvalue 		: IDENTIFIER
+		| IDENTIFIER '.' IDENTIFIER 	%prec DOT
+		| IDENTIFIER '[' expr ']'
 		;
 
-classes 	:
-		|  class classes
-	 	;
-
-lvalue 		: 
-	 	| IDENTIFIER
-		| expr '.' IDENTIFIER
-		| expr '[' expr ']'
-		;
-
-assign 		: lvalue '=' expr ';'
+assign 		: lvalue ASSIGN expr ';'
 	 	;
 
 constant 	: INTEGERCONST
@@ -147,16 +162,16 @@ expr 		: assign
 		| THIS
 		| call
 		| '(' expr ')'
-		| expr '+' expr
-		| expr '-' expr
-		| expr '*' expr
-		| expr '/' expr
-		| expr '%' expr
-		| '-' expr
-		| expr '<' expr
+		| expr ADD expr
+		| expr MINUS expr
+		| expr MULTIPLY expr
+		| expr DIVIDE expr
+		| expr MOD expr
+		| NEGATIVE expr
+		| expr LESS expr
 		| expr LESSEQUAL expr
-		| expr '>' expr
-		| expr GREATEQUAL expr
+		| expr GREATER expr
+		| expr GREATEREQUAL expr
 		| expr EQUAL expr
 		| expr UNEQUAL expr
 		| expr AND expr
@@ -169,8 +184,7 @@ expr 		: assign
 		| NEW IDENTIFIER
 		;
 
-stmt 		: ';'
-       		| expr ';'
+stmt 		: expr ';'
 		| if
 		| while
 		| for
@@ -181,14 +195,14 @@ stmt 		: ';'
 		| block
 		;
 
-block 		: '{' stmt morestmts '}'
+stmts 		: stmt
+		| stmts stmt
 		;
 
-morestmts 	: 
-	   	| stmt morestmts 
+block 		: '{' stmts '}'
 		;
 
-if 		: IF '(' expr ')' stmt
+if 		: IF '(' expr ')' stmt 		%prec LOWER_THAN_ELSE
      		| IF '(' expr ')' stmt ELSE stmt
 		;
 
@@ -217,23 +231,19 @@ input 		: READINT '(' ')' ';'
 		| READLINE '(' ')' ';'
 		;
 
-output 		: PRINT '(' expr moreexprs ')' ';'
+output 		: PRINT '(' exprs ')' ';'
 	 	;
 
-moreexprs 	:
-	   	| ',' expr moreexprs
-		;
+exprs 		: expr
+		| exprs ',' expr
+		; 
 
 parameters 	: 
-	    	| expr moreexprs
-		;
-
-moreexprs 	: 
-	   	| ',' expr moreexprs
+	    	| exprs
 		;
 
 call 		: IDENTIFIER '(' parameters ')'
-       		| expr '.' IDENTIFIER '(' parameters ')'
+       		| IDENTIFIER '.' IDENTIFIER '(' parameters ')'
 		;
 
 %%

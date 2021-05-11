@@ -33,7 +33,7 @@ enum yytokentype {
 	ADD =  		43, 		// The ASCII of '+' is 43
 	MINUS =  	45, 		// The ASCII of '-' is 45
 	MULTIPLY =  	42, 		// The ASCII of '*' is 42
-	DIVISE =  	47, 		// The ASCII of '/' is 47
+	DIVIDE =  	47, 		// The ASCII of '/' is 47
 	MOD =  		37, 		// The ASCII of '%' is 37
 	SELFINC =  	281,
 	SELFDEC =  	282,

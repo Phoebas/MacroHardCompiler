@@ -62,7 +62,6 @@ Comment 	(#[^#]*#)
 "break" 	{ printf("(Keyword 	, %d(break)	)\n", BREAK); 		 return BREAK; 	}
 "continue" 	{ printf("(Keyword 	, %d(continue)	)\n", CONTINUE); 	 return CONTINUE;}
 "new" 		{ printf("(Keyword 	, %d(new)	)\n", NEW); 		 return NEW; 	}
-"array" 	{ printf("(Keyword	, %d(array)	)\n", ARRAY); 		 return ARRAY; 	}
 "print" 	{ printf("(Keyword 	, %d(print)	)\n", PRINT); 		 return PRINT; 	}
 "readint" 	{ printf("(Keyword 	, %d(readint)	)\n", READINT); 	 return READINT;}
 "readline" 	{ printf("(Keyword 	, %d(readline)	)\n", READLINE ); 	 return READLINE;}

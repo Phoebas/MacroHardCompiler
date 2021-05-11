@@ -1,5 +1,5 @@
 void main{
-	array a(int, 20);
+	int a[20];
 	int i;
 	for(i = 0; i<0x14; i++)
 		sum = sum + a[i];

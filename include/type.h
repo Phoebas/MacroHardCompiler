@@ -25,7 +25,7 @@ enum yytokentype {
 	BREAK =  	274,
 	CONTINUE = 	275,
 	NEW =  		276,
-	ARRAY =  	277,
+	
 	PRINT =  	278,
 	READINT =  	279,
 	READLINE =  	280,

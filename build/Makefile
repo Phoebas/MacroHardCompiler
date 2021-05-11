@@ -32,8 +32,8 @@ y.tab.c: lex.yy.c
 # y.tab.o : y.tab.c
 #	$(CC) $(CFLAGS) -c -o y.tab.o y.tab.c
 
-parser: y.tab.c
-	$(CC) $(CFLAGS) $(LIBS) -c -o parse y.tab.c
+parse: y.tab.c
+	$(CC) $(CFLAGS) $(LIBS) -o parse y.tab.c
 
 # link: $(OBJS)
 #	$(LD) -o parse $(OBJS) $(LIBS)
